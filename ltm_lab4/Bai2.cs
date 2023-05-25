@@ -18,7 +18,7 @@ namespace ltm_lab4
         public Bai2()
         {
             InitializeComponent();
-            textBox1.Text = "http://www.contoso.com/PostAccepter.aspx";
+            //textBox1.Text = "http://www.contoso.com/PostAccepter.aspx";
         }
 
         //textbox1 = url; textbox2 = content
