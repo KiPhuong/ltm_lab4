@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Net.Http;
 using Microsoft.VisualBasic.ApplicationServices;
 using System.Text.Json;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ltm_lab4
 {
@@ -72,37 +73,71 @@ namespace ltm_lab4
         //label_page = Pafe; label_usr_page = user/page; label_tol_page = total page; label_tol_user = total user
         void Load(int numpage)
         {
-            FlowLayoutPanel flowLayoutPanel = new FlowLayoutPanel();
-            panel1.Width = flowLayoutPanel.ClientSize.Width;
             string api = $"{url}?page={numpage}";
             string html = GetHTML(api);
             info = JsonSerializer.Deserialize<UserPagination>(html);
-            label_page.Text += info.Page.ToString(); 
-            label_usr_page.Text += info.PerPage.ToString();
-            label_tol_user.Text += info.Total.ToString();
-            label_tol_page.Text += info.TotalPages.ToString();
-            flowLayoutPanel.Controls.Clear();
+            label_page.Text = "Page: " + info.Page.ToString(); 
+            label_usr_page.Text = "User/ Page: " + info.PerPage.ToString();
+            label_tol_user.Text = "Total Users: " +  info.Total.ToString();
+            label_tol_page.Text = "Total Page: " + info.TotalPages.ToString();
+            flowLayoutPanel1.Controls.Clear();
             int i = 1;
 
             foreach (User user in info.Data)
-            {   
+            {
+                Panel panel = new Panel();
+                panel.Width = flowLayoutPanel1.ClientSize.Width;
+                panel.Height = 120;
+
+                TableLayoutPanel tableLayoutPanel = new TableLayoutPanel();
+                tableLayoutPanel.ColumnCount = 2;
+                tableLayoutPanel.Width = panel.ClientSize.Width;
+                tableLayoutPanel.Height = panel.ClientSize.Height;
+                tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70));
+                tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));
+
                 Label mail = new Label();
                 mail.Text = user.Email;
-                tableLayoutPanel1.Controls.Add(mail,1,i);
+                mail.Dock = DockStyle.Fill;
+                tableLayoutPanel.Controls.Add(mail,0,1);
                 Label name = new Label();
                 name.Text = user.FirstName + " " + user.LastName;
-                tableLayoutPanel1.Controls.Add(name,1,i);
+                name.Dock = DockStyle.Fill;
+                tableLayoutPanel.Controls.Add(name,0,0);
                 
-
                 PictureBox pictureBox = new PictureBox();
+                pictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
                 pictureBox.Load(user.Avatar);
-                tableLayoutPanel1.Controls.Add(pictureBox, 2, i);
-                tableLayoutPanel1.SetRowSpan(pictureBox, 2);
-                
-                i++;
+                tableLayoutPanel.Controls.Add(pictureBox, 1, 0);
+                tableLayoutPanel.SetRowSpan(pictureBox, 2);
+                tableLayoutPanel.Dock = DockStyle.Fill;
+
+
+                tableLayoutPanel.Height = pictureBox.Height;
+                panel.Controls.Add(tableLayoutPanel);
+                flowLayoutPanel1.Controls.Add(panel);
             }
         }
 
+        private void button_back_Click(object sender, EventArgs e)
+        {
+            if (page > 1)
+            {
+                page--;
+                Load(page);
+            }
+            else MessageBox.Show("Không thể back, đây là trang 1");
+        }
+
+        private void button_next_Click(object sender, EventArgs e)
+        {
+            if (page != 2)
+            {
+                page++;
+                Load(page);
+            }
+            else MessageBox.Show("Không thể next, đây là trang cuối");
+        }
     }
 }
 
