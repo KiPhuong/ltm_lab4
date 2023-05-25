@@ -46,12 +46,9 @@ namespace ltm_lab4
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.ShowDialog();
-            FileStream fs2 = new FileStream(saveFileDialog.FileName, FileMode.CreateNew);
-            StreamWriter sr = new StreamWriter(fs2);
-            string text = GetHTML(textBox1.Text);
-            sr.Write(text);
-            sr.Close();
-            MessageBox.Show("Đã ghi file HTML thành công");
+            WebClient webClient = new WebClient();
+            Stream response = webClient.OpenRead(textBox1.Text);
+            webClient.DownloadFile(textBox1.Text, saveFileDialog.FileName);
         }
 
         private void button3_Click(object sender, EventArgs e) //button xem source
@@ -60,7 +57,6 @@ namespace ltm_lab4
 
             Bai4_ViewSource viewSource = new Bai4_ViewSource(html);
             viewSource.Show();
-
         }
     }
 }
